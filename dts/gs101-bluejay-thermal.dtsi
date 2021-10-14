@@ -27,9 +27,19 @@
 		thermal-sensors = <&gs101_tm1 0>;
 		trips {
 			trip_config0: trip-config0 {
-				temperature = <125000>;
+				temperature = <56000>;
 				hysteresis = <1000>;
 				type = "passive";
+			};
+			backup_shutdown_sw: backup-shutdown-sw {
+				temperature = <57000>;
+				hysteresis = <1000>;
+				type = "critical";
+			};
+			backup_shutdown_hw: backup-shutdown-hw {
+				temperature = <59000>;
+				hysteresis = <1000>;
+				type = "hot";
 			};
 		};
 	};
