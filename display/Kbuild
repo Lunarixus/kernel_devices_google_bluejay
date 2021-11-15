@@ -1,0 +1,3 @@
+# SPDX-License-Identifier: GPL-2.0
+
+obj-$(CONFIG_DRM_PANEL_SAMSUNG_S6E3FC3_6A)  += panel-samsung-s6e3fc3_6a.o

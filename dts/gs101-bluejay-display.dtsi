@@ -1,0 +1,72 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * Google GS101 Bluejay-specific display device tree source
+ *
+ * Copyright (c) 2021 Google, LLC
+ *
+ */
+
+#include <dt-bindings/gpio/gpio.h>
+
+&drmdsim0 {
+	status = "ok";
+	#address-cells = <1>;
+	#size-cells = <0>;
+
+	samsung_s6e3fc3_6a: panel@0 {
+		compatible = "samsung,s6e3fc3_6a";
+		label = "samsung-s6e3fc3_6a";
+		channel = <0>;
+		touch = <&spitouch>;
+
+		/* reset, power */
+		reset-gpios = <&gpp24 1 GPIO_ACTIVE_HIGH>;
+		vci-supply = <&m_ldo22_reg>;
+		/delete-node/ vddi-supply;
+	};
+
+	panel@1 {
+		compatible = "samsung,emul";
+		label = "samsung-emul";
+		channel = <0>;
+
+		/* reset, power */
+		reset-gpios = <&gpp24 1 GPIO_ACTIVE_HIGH>;
+	};
+
+	samsung_sofef01: panel@2 {
+		compatible = "samsung,sofef01";
+		label = "samsung-sofef01";
+		channel = <0>;
+		touch = <&spitouch>;
+
+		/* reset, power */
+		reset-gpios = <&gpp24 1 GPIO_ACTIVE_HIGH>;
+		vci-supply = <&m_ldo22_reg>;
+		/delete-node/ vddi-supply;
+	};
+
+};
+
+&drmdsim1 {
+	status = "disabled";
+};
+
+&dsim_modes {
+	dsim-modes {
+		1080x2400 {
+			mode-name = "1080x2400";
+			pmsk = <
+				0x2 0xDF 0x3 0xA800 /* p m s k */
+				>;
+			hs-clk = <684>;
+			esc-clk = <20>;
+		};
+	};
+};
+
+/* vci-supply voltage for drmdsim0 */
+&m_ldo22_reg {
+	regulator-min-microvolt = <3025000>;
+	regulator-max-microvolt = <3025000>;
+};

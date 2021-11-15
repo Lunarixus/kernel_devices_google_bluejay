@@ -1,0 +1,65 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * Google GS101 B3 battery device tree
+ *
+ * Copyright (c) 2021 Google, LLC
+ *
+ */
+
+
+/ {
+	fragment@charging {
+		target-path = "/";
+		__overlay__ {
+
+			google_charger: google,charger {
+				status = "okay";
+				compatible = "google,charger";
+				#cooling-cells = <2>;
+
+				google,chg-power-supply = "main-charger"; /* max77759-charger */
+				google,bat-power-supply = "battery";
+				google,usb-power-supply = "usb";
+
+				google,fv-max-uv = <4450000>;
+
+				google,thermal-mitigation = <4300000 3500000 3000000
+					2500000 2000000 1500000 1000000 500000>;
+
+				/* b/170700459 thresholds, updated in b/191070950 */
+				google,bd-resume-abs-temp = <280>;
+				google,bd-resume-soc = <50>;
+				google,bd-resume-time = <14400>;  /* 4 hours */
+				google,bd-resume-temp = <290>;
+				google,bd-trigger-time = <21600>; /* 6 hours */
+				google,bd-trigger-temp = <350>;
+				google,bd-trigger-voltage = <4270000>;
+				google,bd-recharge-voltage = <4250000>;
+				google,bd-drainto-soc = <80>;
+				google,bd-recharge-soc = <79>;
+				/* Enable TEMP-DEFEND */
+				google,bd-temp-enable;
+				google,bd-temp-dry-run;
+			};
+
+		};
+	};
+};
+
+
+&max77759_chg {
+	max77759,psy-name = "main-charger";
+	max77759,usb-otg-mv = <5000>;
+};
+
+&fusb307b {
+	chg-psy-name = "main-charger";
+};
+
+&max77759tcpc {
+	chg-psy-name = "main-charger";
+};
+
+&hsi2c_12 {
+	clock-frequency = <370000>;
+};

@@ -1,0 +1,17 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * Copyright 2021 Google, LLC.
+ */
+
+#include "google-base/gs101-fts-touch.dtsi"
+
+&spitouch {
+	spi-max-frequency = <10000000>;
+	st,dchip_id = /bits/ 8 <0x36 0x48>;
+	st,max-coords = <1079 2399>;
+	st,udfps-coords = <540 1717>;
+	st,touch_offload_id = /bits/ 8 <'0' '0' 'b' '3'>;
+	st,firmware_names = "ftm5_fw_b3.ftb";
+	st,limits_names = "stm_fts_production_limits_b3.csv";
+	st,panel_map = <&samsung_s6e3fc3_6a 0>;
+};

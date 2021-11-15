@@ -1,0 +1,62 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * Bluejay pmic settings.
+ *
+ * Copyright 2021 Google,LLC
+ */
+
+&s_ldo5_reg {
+	/* Enabled for MAG */
+	regulator-always-on;
+	regulator-initial-mode = <3>;
+};
+
+/* VSYS_PWR_DISPLAY */
+&ch2 {
+        rail-name = "VSEN_C1";
+};
+
+/* L15M_VDD_SLC_M */
+&ch3 {
+        rail-name = "LDO15M";
+};
+
+/* L9S_GNSS_CORE */
+&ch9 {
+        rail-name = "LDO9S";
+};
+
+/* L8S_UFS_VCCQ */
+&ch16 {
+        rail-name = "LDO8S";
+};
+
+&m_ext1_rail {
+        schematic-name = "VSYS_PWR_DISPLAY";
+        subsys-name = "Display";
+};
+
+&m_ext2_rail {
+        schematic-name = "VSEN_C2_NC";
+        subsys-name = "Spare";
+};
+
+&m_ext3_rail {
+        schematic-name = "VSEN_C3_NC";
+        subsys-name = "Spare";
+};
+
+&s_ext4_rail {
+        schematic-name = "VSEN_C4_NC";
+        subsys-name = "Spare";
+};
+
+&s_ext5_rail {
+        schematic-name = "VSEN_C5_NC";
+        subsys-name = "Spare";
+};
+
+&s_ext6_rail {
+        schematic-name = "VSEN_C6_NC";
+        subsys-name = "Spare";
+};

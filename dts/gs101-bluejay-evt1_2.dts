@@ -1,0 +1,28 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * Bluejay EVT1.2 device tree source
+ *
+ * Copyright 2021 Google,LLC
+ */
+
+/dts-v1/;
+/plugin/;
+
+#include "gs101-bluejay.dtsi"
+#include "gs101-bluejay-audio.dtsi"
+#include "gs101-bluejay-fingerprint.dtsi"
+#include "gs101-bluejay-touch.dtsi"
+#include "gs101-bluejay-ese.dtsi"
+#include "gs101-bluejay-usb.dtsi"
+
+/ {
+	board_id = <0x20503>;
+	board_rev = <0x010200>;
+	fragment@boardbase {
+		target-path="/";
+		__overlay__ {
+			model = "GS101 BLUEJAY EVT 1.2 based on GS101";
+			compatible = "google,GS101 BLUEJAY", "google,GS101";
+		};
+	};
+};

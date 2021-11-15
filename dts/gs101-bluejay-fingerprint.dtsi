@@ -1,0 +1,45 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * Google Bluejay-specific fingerprint device tree source
+ *
+ * Copyright 2021 Google, LLC.
+ */
+
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/pinctrl/samsung.h>
+
+&pinctrl_4 {
+	goodix_rst_power_down: goodix_rst_power_down {
+		samsung,pins ="gpp4-3";
+		samsung,pin-function = <EXYNOS_PIN_FUNC_OUTPUT>;
+		samsung,pin-pud = <EXYNOS_PIN_PULL_NONE>;
+		samsung,pin-con-pdn = <EXYNOS_PIN_PDN_OUT1>;
+		samsung,pin-pud-pdn = <EXYNOS_PIN_PULL_NONE>;
+	};
+};
+
+&pinctrl_0 {
+	goodix_irq_power_down: goodix_irq_power_down {
+		samsung,pins ="gpa9-2";
+		samsung,pin-function = <EXYNOS_PIN_FUNC_INPUT>;
+		samsung,pin-pud = <EXYNOS_PIN_PULL_DOWN>;
+	};
+};
+
+&odm {
+	goodixfp: goodixfp {
+		status = "okay";
+		compatible = "goodix,fingerprint";
+		interrupt-parent = <&gpa9>;
+		interrupts = <2 0>;
+		spi-max-frequency = <1000000>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&goodix_rst_power_down &goodix_irq_power_down>;
+		fp-gpio-irq = <&gpa9 2 GPIO_ACTIVE_HIGH>;
+		fp-gpio-reset = <&gpp4 3 GPIO_ACTIVE_LOW>;
+	};
+};
+
+&m_ldo27_reg {
+	regulator-always-on;
+};

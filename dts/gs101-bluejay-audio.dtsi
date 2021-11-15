@@ -1,0 +1,78 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * Google GS101 Bluejay audio device tree source
+ *
+ * Copyright (c) 2021 Google, LLC
+ *		https://www.google.com
+ *
+*/
+
+#include "google-base/gs101-raviole-audio.dtsi"
+
+&aoc {
+	aoc-board-cfg = "b3";
+};
+
+/* cs40l26 is different way, fix this later */
+/delete-node/ &cs40l2x_codec;
+/delete-node/ &cs40l2x_codec_clk;
+/delete-node/ &cs40l25a_haptics;
+
+&dai_be_haptic_rx_codec {
+	sound-dai = <&cs40l26_codec 0>;
+};
+
+&aoc_snd_card {
+	clks {
+		sys {
+			sys@cs40l26_codec {
+				comp = <&cs40l26_codec>;
+				src = "BCLK";
+				/* clk id */
+				id = <0>;
+				/* clk source */
+				srcid = <0>;
+				/* in clk multiple */
+				in_mul = <1>;
+				/* out clk multiple */
+				out_mul = <1>;
+			};
+		};
+	};
+};
+
+&hsi2c_8 {
+	#address-cells = <1>;
+	#size-cells = <0>;
+	status = "okay";
+
+	pinctrl-names = "default";
+	pinctrl-0 = <&hsi2c8_bus>;
+
+	clock-frequency = <400000>;
+
+	cs40l26a_haptics: cs40l26a@43 {
+		compatible = "cirrus,cs40l26a";
+		reg = <0x43>;
+
+		dev-name = "cs40l26a";	/* sysfs folder name */
+		input-device-name = "cs40l26_input";	/* input device name */
+		pinctrl-names = "default";
+		pinctrl-0 = <&hapt_amp_irq &hapt_amp_rst &hapt_amp_trig>;
+
+		interrupt-parent = <&gpa6>;
+		interrupts = <5 0 0>;
+
+		reset-gpios = <&gpp24 0 0>;
+
+		cirrus,bst-dcm-en = <0>;
+		/* TODO (b/185767279): check the trigger & refclk pin usage. */
+
+		status = "okay";
+		cs40l26_codec: cs40l26_codec@snd {
+			#sound-dai-cells = <1>;
+			compatible = "cs40l26-codec";
+			status = "okay";
+		};
+	};
+};

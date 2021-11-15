@@ -1,0 +1,25 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * Bluejay device tree source
+ *
+ * Copyright 2020 Google,LLC
+ */
+
+#include "google-base/gs101-common.dtsi"
+#include "google-base/gs101-raviole-battery.dtsi"
+#include "gs101-bluejay-camera-pmic.dtsi"
+#include "gs101-bluejay-battery.dtsi"
+#include "gs101-bluejay-charging.dtsi"
+#include "gs101-bluejay-usecases.dtsi"
+#include "gs101-bluejay-camera.dtsi"
+#include "gs101-bluejay-display.dtsi"
+#include "gs101-bluejay-thermal.dtsi"
+#include "gs101-bluejay-pmic.dtsi"
+#include "google-base/gs101-whitefin-cp-s5200-sit-common.dtsi"
+#include "google-base/gs101-whitefin-nfc.dtsi"
+#include "google-base/gs101-slider-gsa-gsc.dtsi"
+#include "google-base/gs101-slider2-gps.dtsi"
+#include "google-base/gs101-whitefin2-cp-s5200-sit.dtsi"
+#include "google-base/gs101-whitefin2-pmic.dtsi"
+#include "google-base/gs101-whitefin2-bcl.dtsi"
+#include "gs101-bluejay-typec.dtsi"

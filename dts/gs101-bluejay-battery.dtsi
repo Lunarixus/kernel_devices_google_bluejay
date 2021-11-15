@@ -1,0 +1,37 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * Battery device tree entries specific to bluejay
+ *
+ * Copyright 2021 Google,LLC
+ *
+ */
+
+&google_battery {
+	google,chg-battery-capacity = <4306>;
+};
+
+&max77759_fg {
+	maxim,fg-data {
+		#include "gs101-bluejay-battery-data.dtsi"
+	};
+};
+
+/ {
+	fragment@battery {
+		target-path = "/";
+		__overlay__ {
+			google_battery: google,battery {
+				google,ttf-temp-idx= <2>;
+				google,ttf-adapter = <3000>;
+				google,ttf-soc-table =  <36 45 63 69 81 88  93  100>;
+				google,ttf-elap-table = <40 45 53 61 73 105 196 144>;
+				google,ttf-tier-table = <0 48 70>;
+			};
+			google_bms {
+				nvmem-names = "5-00500";
+				/* pack eeprom is available only with P20+ batteries */
+				google,bee-name = "5-00500";
+			};
+		};
+	};
+};

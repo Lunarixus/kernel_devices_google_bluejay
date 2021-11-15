@@ -1,0 +1,13 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * Google GS101 B3 battery device tree
+ *
+ * Copyright (c) 2021 Google, LLC
+ *
+ */
+
+
+/* system use cases */
+&max77759_chg {
+	/* no external boost in proto+, add the usecases here if needed */
+};

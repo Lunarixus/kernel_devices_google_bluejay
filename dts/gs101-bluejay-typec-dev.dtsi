@@ -1,0 +1,11 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * Google GS101 B3 Type-C device tree
+ *
+ * Copyright (c) 2021 Google, LLC
+ *
+ */
+
+&max77759tcpc {
+	in-switch-gpio = <&max20339_gpio 4 GPIO_ACTIVE_HIGH>;
+};
