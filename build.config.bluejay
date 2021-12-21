@@ -15,6 +15,8 @@ google/devices/bluejay/gs101-bluejay-evt1_1.dtb
 google/devices/bluejay/gs101-bluejay-evt1_2.dtb
 google/devices/bluejay/gs101-bluejay-dvt1_0.dtb
 google/devices/bluejay/gs101-bluejay-dvt1_1.dtb
+google/devices/bluejay/gs101-bluejay-pvt1_0.dtb
+google/devices/bluejay/gs101-bluejay-mp1_0.dtb
 google/devices/bluejay/dtbo.img
 google/devices/bluejay/google-base/gs101-dpm-eng.dtbo
 google/devices/bluejay/google-base/gs101-dpm-user.dtbo
