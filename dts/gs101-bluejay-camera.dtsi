@@ -114,6 +114,9 @@
 			sensor0: sensor@0 {
 				compatible = "google,lwis-i2c-device";
 
+				/* Adjust thread priority for I2C */
+				thread-priority = <1>;
+
 				/* Device node name */
 				node-name = "sensor-imx363";
 
@@ -215,6 +218,9 @@
 			sensor1: sensor@1 {
 				compatible = "google,lwis-i2c-device";
 
+				/* Adjust thread priority for I2C */
+				thread-priority = <1>;
+
 				/* Device node name */
 				node-name = "sensor-imx386";
 
@@ -293,6 +299,9 @@
 			/* FRONT CAMERA IMX355 */
 			sensor2: sensor@2 {
 				compatible = "google,lwis-i2c-device";
+
+				/* Adjust thread priority for I2C */
+				thread-priority = <1>;
 
 				/* Device node name */
 				node-name = "sensor-imx355";
@@ -373,6 +382,9 @@
 			eeprom0: eeprom@0 {
 				compatible = "google,lwis-i2c-device";
 
+				/* Adjust thread priority for I2C */
+				thread-priority = <1>;
+
 				/* Device node name */
 				node-name = "eeprom-lc898129";
 
@@ -422,6 +434,9 @@
 			eeprom1: eeprom@1 {
 				compatible = "google,lwis-i2c-device";
 
+				/* Adjust thread priority for I2C */
+				thread-priority = <1>;
+
 				/* Device node name */
 				node-name = "eeprom-m24c64x";
 
@@ -457,6 +472,9 @@
 			eeprom2: eeprom@2 {
 				compatible = "google,lwis-i2c-device";
 
+				/* Adjust thread priority for I2C */
+				thread-priority = <1>;
+
 				/* Device node name */
 				node-name = "eeprom-m24c64s";
 
@@ -491,6 +509,9 @@
 			/* Actuator lc898129 for imx363 */
 			actuator0: actuator@0 {
 				compatible = "google,lwis-i2c-device";
+
+				/* Adjust thread priority for I2C */
+				thread-priority = <1>;
 
 				/* Device node name */
 				node-name = "act-lc898129";
@@ -541,6 +562,9 @@
 			ois0: ois@0 {
 				compatible = "google,lwis-i2c-device";
 
+				/* Adjust thread priority for I2C */
+				thread-priority = <1>;
+
 				/* Device node name */
 				node-name = "ois-lc898129";
 
@@ -588,6 +612,9 @@
 
 			flash0: flash@0 {
 				compatible = "google,lwis-i2c-device";
+
+				/* Adjust thread priority for I2C */
+				thread-priority = <1>;
 
 				/* Device node name */
 				node-name = "flash-lm3644";
