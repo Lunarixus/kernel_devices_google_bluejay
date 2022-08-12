@@ -2,7 +2,7 @@
 /*
  * MIPI-DSI based s6e3fc3_6a AMOLED LCD panel driver.
  *
- * Copyright (c) 2021 Google, LLC
+ * Copyright (c) 2020 Samsung Electronics Co., Ltd
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -35,10 +35,10 @@ static const unsigned char PPS_SETTING[] = {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
-#define S6E3FC3_6A_WRCTRLD_DIMMING_BIT    0x08
-#define S6E3FC3_6A_WRCTRLD_BCTRL_BIT      0x20
-#define S6E3FC3_6A_WRCTRLD_HBM_BIT        0xC0
-#define S6E3FC3_6A_WRCTRLD_LOCAL_HBM_BIT  0x10
+#define s6e3fc3_6a_WRCTRLD_DIMMING_BIT    0x08
+#define s6e3fc3_6a_WRCTRLD_BCTRL_BIT      0x20
+#define s6e3fc3_6a_WRCTRLD_HBM_BIT        0xC0
+#define s6e3fc3_6a_WRCTRLD_LOCAL_HBM_BIT  0x10
 
 static const u8 display_off[] = { 0x28 };
 static const u8 display_on[] = { 0x29 };
@@ -73,11 +73,49 @@ static const struct exynos_dsi_cmd s6e3fc3_6a_lp_high_cmds[] = {
 	EXYNOS_DSI_CMD(display_on, 0)
 };
 
+static const struct exynos_dsi_cmd s6e3fc3_6a_1_pwm_cmds[] = {
+	EXYNOS_DSI_CMD0(test_key_on_f0),
+	EXYNOS_DSI_CMD_SEQ(0xB0, 0x28, 0xF2),
+	EXYNOS_DSI_CMD_SEQ(0xF2, 0xCC),
+	EXYNOS_DSI_CMD_SEQ(0xB0, 0x01, 0xF2, 0x65),
+	EXYNOS_DSI_CMD_SEQ(0x65, 0x00, 0x72),
+	EXYNOS_DSI_CMD_SEQ(0xB0, 0x01, 0xD2, 0x65),
+	EXYNOS_DSI_CMD_SEQ(0x65, 0x00, 0x72),
+	EXYNOS_DSI_CMD_SEQ(0xB0, 0x02, 0x33, 0x65),
+	EXYNOS_DSI_CMD_SEQ(0x65, 0x01, 0x02, 0x22),
+	EXYNOS_DSI_CMD_SEQ(0xB0, 0x02, 0x38, 0x65),
+	EXYNOS_DSI_CMD_SEQ(0x65, 0x01, 0x00, 0x01, 0x00),
+	EXYNOS_DSI_CMD_SEQ(0xB0, 0x00, 0x28, 0xF2),
+	EXYNOS_DSI_CMD_SEQ(0xF2, 0xC4),
+	EXYNOS_DSI_CMD0(freq_update),
+	EXYNOS_DSI_CMD0(test_key_off_f0)
+};
+static DEFINE_EXYNOS_CMD_SET(s6e3fc3_6a_1_pwm);
+
+static const struct exynos_dsi_cmd s6e3fc3_6a_4_pwm_cmds[] = {
+	EXYNOS_DSI_CMD0(test_key_on_f0),
+	EXYNOS_DSI_CMD_SEQ(0xB0, 0x28, 0xF2),
+	EXYNOS_DSI_CMD_SEQ(0xF2, 0xCC),
+	EXYNOS_DSI_CMD_SEQ(0xB0, 0x01, 0xF2, 0x65),
+	EXYNOS_DSI_CMD_SEQ(0x65, 0x01, 0xC4),
+	EXYNOS_DSI_CMD_SEQ(0xB0, 0x01, 0xD2, 0x65),
+	EXYNOS_DSI_CMD_SEQ(0x65, 0x01, 0xC4),
+	EXYNOS_DSI_CMD_SEQ(0xB0, 0x02, 0x33, 0x65),
+	EXYNOS_DSI_CMD_SEQ(0x65, 0x01, 0x02, 0x22),
+	EXYNOS_DSI_CMD_SEQ(0xB0, 0x02, 0x38, 0x65),
+	EXYNOS_DSI_CMD_SEQ(0x65, 0x01, 0x00, 0x01, 0x00),
+	EXYNOS_DSI_CMD_SEQ(0xB0, 0x00, 0x28, 0xF2),
+	EXYNOS_DSI_CMD_SEQ(0xF2, 0xC4),
+	EXYNOS_DSI_CMD0(freq_update),
+	EXYNOS_DSI_CMD0(test_key_off_f0)
+};
+static DEFINE_EXYNOS_CMD_SET(s6e3fc3_6a_4_pwm);
+
 static const struct exynos_binned_lp s6e3fc3_6a_binned_lp[] = {
 	BINNED_LP_MODE("off", 0, s6e3fc3_6a_lp_off_cmds),
-	/* rising time = delay = 0, falling time = delay + width = 0 + 73 */
-	BINNED_LP_MODE_TIMING("low", 80, s6e3fc3_6a_lp_low_cmds, 0, 0 + 73),
-	BINNED_LP_MODE_TIMING("high", 2047, s6e3fc3_6a_lp_high_cmds, 0, 0 + 73)
+	/* rising time = delay = 0, falling time = delay + width = 0 + 16 */
+	BINNED_LP_MODE_TIMING("low", 80, s6e3fc3_6a_lp_low_cmds, 0, 0 + 16),
+	BINNED_LP_MODE_TIMING("high", 2047, s6e3fc3_6a_lp_high_cmds, 0, 0 + 16)
 };
 
 static const struct exynos_dsi_cmd s6e3fc3_6a_init_cmds[] = {
@@ -88,21 +126,29 @@ static const struct exynos_dsi_cmd s6e3fc3_6a_init_cmds[] = {
 
 	EXYNOS_DSI_CMD0(test_key_on_f0),
 
+	/* TE rising time */
+	EXYNOS_DSI_CMD_SEQ_REV(PANEL_REV_LT(PANEL_REV_EVT1),
+			       0xB9, 0x01, 0x09, 0x5C, 0x00, 0x0B),
+
 	/* FQ CON setting */
-	EXYNOS_DSI_CMD_SEQ(0xB0, 0x27, 0xF2),
+	EXYNOS_DSI_CMD_SEQ(0xB0, 0x27, 0xF2 ),
 	EXYNOS_DSI_CMD_SEQ(0xF2, 0x00),
 	EXYNOS_DSI_CMD0(freq_update),
 
-	/* IRC setting */
-	EXYNOS_DSI_CMD_SEQ(0xB0, 0x03, 0x8F),
-	EXYNOS_DSI_CMD_SEQ(0x8F, 0x25),
+	/* IRC setting for HBM */
+	EXYNOS_DSI_CMD_SEQ_REV(PANEL_REV_PROTO1, 0xB0, 0x0B, 0x8F),
+	EXYNOS_DSI_CMD_SEQ_REV(PANEL_REV_PROTO1, 0x8F, 0x2B),
+
+	/* Enable FD in display PMIC for ELVDD and ELVSS */
+	EXYNOS_DSI_CMD_SEQ_REV(PANEL_REV_LT(PANEL_REV_EVT1), 0xB0, 0x0B, 0xF4),
+	EXYNOS_DSI_CMD_SEQ_REV(PANEL_REV_LT(PANEL_REV_EVT1), 0xF4, 0x1C),
 
 	/* Local HBM circle location setting */
 	EXYNOS_DSI_CMD0(test_key_on_f1),
 	EXYNOS_DSI_CMD_SEQ(0xB0, 0x28, 0xF2),
 	EXYNOS_DSI_CMD_SEQ(0xF2, 0xCC),
 	EXYNOS_DSI_CMD_SEQ(0xB0, 0x01, 0x34, 0x68),
-	EXYNOS_DSI_CMD_SEQ(0x68, 0x21, 0xC6, 0xB3),
+	EXYNOS_DSI_CMD_SEQ(0x68, 0x21, 0xC6, 0xE9),
 	EXYNOS_DSI_CMD_SEQ(0xB0, 0x00, 0x28, 0xF2),
 	EXYNOS_DSI_CMD_SEQ(0xF2, 0xC4),
 	EXYNOS_DSI_CMD0(test_key_off_f1),
@@ -112,7 +158,7 @@ static const struct exynos_dsi_cmd s6e3fc3_6a_init_cmds[] = {
 static DEFINE_EXYNOS_CMD_SET(s6e3fc3_6a_init);
 
 static void s6e3fc3_6a_get_te2_setting(struct exynos_panel_te2_timing *timing,
-				       u8 *setting)
+				    u8 *setting)
 {
 	u8 delay_low_byte, delay_high_byte;
 	u8 width_low_byte, width_high_byte;
@@ -138,13 +184,19 @@ static void s6e3fc3_6a_update_te2(struct exynos_panel *ctx)
 {
 	struct exynos_panel_te2_timing timing;
 	u8 setting[2][4] = {
+		{0xCB, 0x00, 0x00, 0x30}, // normal 60Hz
 		{0xCB, 0x00, 0x00, 0x30}, // normal 90Hz
 	};
-	u8 lp_setting[4] = {0xCB, 0x00, 0x00, 0x49}; // lp low/high
+	u8 lp_setting[4] = {0xCB, 0x00, 0x00, 0x10}; // lp low/high
 	int ret, i;
 
 	if (!ctx)
 		return;
+
+	if (ctx->panel_rev == PANEL_REV_PROTO1) {
+		dev_dbg(ctx->dev, "No need to send TE2 commands on P1.0\n");
+		return;
+	}
 
 	/* normal mode */
 	for (i = 0; i < 2; i++) {
@@ -174,21 +226,12 @@ static void s6e3fc3_6a_update_te2(struct exynos_panel *ctx)
 	}
 
 	EXYNOS_DCS_WRITE_TABLE(ctx, test_key_on_f0);
-
-	if (ctx->panel_rev == PANEL_REV_PROTO1) {
-		EXYNOS_DCS_WRITE_SEQ(ctx, 0xB0, 0x1C, 0xCB); /* global para  */
-		EXYNOS_DCS_WRITE_SEQ(ctx, 0xCB, 0x14); /* TE2 on */
-		EXYNOS_DCS_WRITE_SEQ(ctx, 0xB0, 0x30, 0xCB); /* global para  */
-		EXYNOS_DCS_WRITE_SEQ(ctx, 0xCB, 0x14); /* TE2 on */
-		EXYNOS_DCS_WRITE_SEQ(ctx, 0xB0, 0x39, 0xCB); /* global para  */
-		EXYNOS_DCS_WRITE_SEQ(ctx, 0xCB, 0x6F); /* TE2 on */
-	}
-
 	EXYNOS_DCS_WRITE_SEQ(ctx, 0xB0, 0x28, 0xF2); /* global para  */
 	EXYNOS_DCS_WRITE_SEQ(ctx, 0xF2, 0xCC); /* global para 10bit */
 	EXYNOS_DCS_WRITE_SEQ(ctx, 0xB0, 0x00, 0x26, 0xF2); /* global para */
 	EXYNOS_DCS_WRITE_SEQ(ctx, 0xF2, 0x03, 0x14); /* TE2 on */
 	EXYNOS_DCS_WRITE_SEQ(ctx, 0xB0, 0x00, 0xAF, 0xCB); /* global para */
+	EXYNOS_DCS_WRITE_TABLE(ctx, setting[0]); /* 60Hz control */
 	EXYNOS_DCS_WRITE_SEQ(ctx, 0xB0, 0x01, 0x2F, 0xCB); /* global para */
 	EXYNOS_DCS_WRITE_TABLE(ctx, setting[1]); /* 90Hz control */
 	if (ctx->current_mode->exynos_mode.is_lp_mode) {
@@ -217,16 +260,16 @@ static void s6e3fc3_6a_change_frequency(struct exynos_panel *ctx,
 
 static void s6e3fc3_6a_update_wrctrld(struct exynos_panel *ctx)
 {
-	u8 val = S6E3FC3_6A_WRCTRLD_BCTRL_BIT;
+	u8 val = s6e3fc3_6a_WRCTRLD_BCTRL_BIT;
 
 	if (IS_HBM_ON(ctx->hbm_mode))
-		val |= S6E3FC3_6A_WRCTRLD_HBM_BIT;
+		val |= s6e3fc3_6a_WRCTRLD_HBM_BIT;
 
 	if (ctx->hbm.local_hbm.enabled)
-		val |= S6E3FC3_6A_WRCTRLD_LOCAL_HBM_BIT;
+		val |= s6e3fc3_6a_WRCTRLD_LOCAL_HBM_BIT;
 
 	if (ctx->dimming_on)
-		val |= S6E3FC3_6A_WRCTRLD_DIMMING_BIT;
+		val |= s6e3fc3_6a_WRCTRLD_DIMMING_BIT;
 
 	dev_dbg(ctx->dev,
 		"%s(wrctrld:0x%x, hbm: %s, dimming: %s, local_hbm: %s)\n",
@@ -236,6 +279,7 @@ static void s6e3fc3_6a_update_wrctrld(struct exynos_panel *ctx)
 
 	EXYNOS_DCS_WRITE_SEQ(ctx, MIPI_DCS_WRITE_CONTROL_DISPLAY, val);
 
+	/* TODO: need to perform gamma updates */
 }
 
 static void s6e3fc3_6a_set_nolp_mode(struct exynos_panel *ctx,
@@ -248,56 +292,15 @@ static void s6e3fc3_6a_set_nolp_mode(struct exynos_panel *ctx,
 		return;
 
 	EXYNOS_DCS_WRITE_TABLE(ctx, display_off);
-	/* backlight control and dimming */
 	s6e3fc3_6a_update_wrctrld(ctx);
+	s6e3fc3_6a_change_frequency(ctx, vrefresh);
 	usleep_range(delay_us, delay_us + 10);
 	EXYNOS_DCS_WRITE_TABLE(ctx, display_on);
 
 	dev_info(ctx->dev, "exit LP mode\n");
 }
 
-#define S6E3FC3_LOCAL_HBM_GAMMA_CMD_SIZE 6
-static void s6e3fc3_6a_update_lhbm_gamma(struct exynos_panel *ctx)
-{
-	/* ratio provided by HW for update the LHBM gamma.
-	 * ratio must be a integer due to kernel didn't support floating.
-	 * ratio original value R: 1.076923077, G: 1.061566485, B: 1.065269461.
-	 * ratio cannot exceed u32 max 4294967296.
-	 * R gamma hex from last 16bit from gamma_cmd[1] combine with gamma_cmd[3]
-	 * G gamma hex from first 16bit from gamma_cmd[2] combine with gamma_cmd[4]
-	 * B gamma hex from last 16bit from gamma_cmd[2] combine with gamma_cmd[5]
-	 */
-	u8 *gamma_cmd = ctx->hbm.local_hbm.gamma_cmd;
-	const u32 rgb_ratio[3] = {1076923077, 1061566485, 1065269461};
-	const u8 rgb_index[3][2] = {{1, 3}, {2, 4}, {2, 5}};
-	u8 new_gamma_cmd[S6E3FC3_LOCAL_HBM_GAMMA_CMD_SIZE] = {0};
-	u64 tmp;
-	int i;
-	u16 mask, shift;
-	dev_info(ctx->dev, "%s: gamma_cmd(%02x %02x %02x %02x %02x)\n", __func__,
-		gamma_cmd[1], gamma_cmd[2], gamma_cmd[3], gamma_cmd[4], gamma_cmd[5]);
-	for (i = 0; i < ARRAY_SIZE(rgb_ratio); i++) {
-		if (i % 2) {
-			mask = 0xf0;
-			shift = 4;
-		} else {
-			mask = 0x0f;
-			shift = 0;
-		}
-		tmp = ((gamma_cmd[rgb_index[i][0]] & mask) >> shift) << 8 | gamma_cmd[rgb_index[i][1]];
-		dev_dbg(ctx->dev, "%s: lhbm_gamma[%d] = %llu\n", __func__, i, tmp);
-
-		/* Round off and revert to original gamma value */
-		tmp = (tmp * rgb_ratio[i] + 500000000)/1000000000;
-		dev_dbg(ctx->dev, "%s: new lhbm_gamma[%d] = %llu\n", __func__, i, tmp);
-		new_gamma_cmd[rgb_index[i][0]] |= ((tmp & 0xff00) >> 8) << shift;
-		new_gamma_cmd[rgb_index[i][1]] |= tmp & 0xff;
-	}
-	memcpy(&gamma_cmd[1], &new_gamma_cmd[1], S6E3FC3_LOCAL_HBM_GAMMA_CMD_SIZE - 1);
-	dev_info(ctx->dev, "%s: new_gamma_cmd(%02x %02x %02x %02x %02x)\n", __func__,
-		gamma_cmd[1], gamma_cmd[2], gamma_cmd[3], gamma_cmd[4], gamma_cmd[5]);
-}
-
+#define s6e3fc3_6a_LOCAL_HBM_GAMMA_CMD_SIZE 6
 static int s6e3fc3_6a_lhbm_gamma_read(struct exynos_panel *ctx)
 {
 	struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
@@ -308,8 +311,8 @@ static int s6e3fc3_6a_lhbm_gamma_read(struct exynos_panel *ctx)
 	EXYNOS_DCS_WRITE_SEQ(ctx, 0xB0, 0x28, 0xF2); /* global para*/
 	EXYNOS_DCS_WRITE_SEQ(ctx, 0xF2, 0xCC); /* 10 bit */
 	EXYNOS_DCS_WRITE_SEQ(ctx, 0xB0, 0x00, 0x22, 0xD8); /* global para */
-	ret = mipi_dsi_dcs_read(dsi, 0xD8, gamma_cmd + 1, S6E3FC3_LOCAL_HBM_GAMMA_CMD_SIZE - 1);
-	if (ret == (S6E3FC3_LOCAL_HBM_GAMMA_CMD_SIZE - 1)) {
+	ret = mipi_dsi_dcs_read(dsi, 0xD8, gamma_cmd + 1, s6e3fc3_6a_LOCAL_HBM_GAMMA_CMD_SIZE - 1);
+	if (ret == (s6e3fc3_6a_LOCAL_HBM_GAMMA_CMD_SIZE - 1)) {
 		gamma_cmd[0] = 0x65;
 		ctx->hbm.local_hbm.gamma_para_ready = true;
 		ret = 0;
@@ -320,7 +323,6 @@ static int s6e3fc3_6a_lhbm_gamma_read(struct exynos_panel *ctx)
 	EXYNOS_DCS_WRITE_SEQ(ctx, 0xB0, 0x00, 0x28, 0xF2); /* global para*/
 	EXYNOS_DCS_WRITE_SEQ(ctx, 0xF2, 0xC4); /* 8 bit */
 	EXYNOS_DCS_WRITE_TABLE(ctx, test_key_off_f0);
-	s6e3fc3_6a_update_lhbm_gamma(ctx);
 	return ret;
 }
 
@@ -329,9 +331,9 @@ static void s6e3fc3_6a_lhbm_gamma_write(struct exynos_panel *ctx)
 	EXYNOS_DCS_WRITE_TABLE(ctx, test_key_on_f0);
 	EXYNOS_DCS_WRITE_SEQ(ctx, 0xB0, 0x28, 0xF2); /* global para*/
 	EXYNOS_DCS_WRITE_SEQ(ctx, 0xF2, 0xCC); /* 10 bit */
-	EXYNOS_DCS_WRITE_SEQ(ctx, 0xB0, 0x03, 0xC8, 0x65); /* global para */
+	EXYNOS_DCS_WRITE_SEQ(ctx, 0xB0, 0x03, 0xCD, 0x65); /* global para */
 	exynos_dcs_write(ctx, ctx->hbm.local_hbm.gamma_cmd,
-			 S6E3FC3_LOCAL_HBM_GAMMA_CMD_SIZE); /* write gamma */
+			 s6e3fc3_6a_LOCAL_HBM_GAMMA_CMD_SIZE); /* write gamma */
 	EXYNOS_DCS_WRITE_SEQ(ctx, 0xB0, 0x00, 0x28, 0xF2); /* global para*/
 	EXYNOS_DCS_WRITE_SEQ(ctx, 0xF2, 0xC4); /* 8 bit */
 	EXYNOS_DCS_WRITE_TABLE(ctx, test_key_off_f0);
@@ -357,7 +359,9 @@ static int s6e3fc3_6a_enable(struct drm_panel *panel)
 
 	s6e3fc3_6a_change_frequency(ctx, drm_mode_vrefresh(mode));
 
-	if (ctx->panel_rev >= PANEL_REV_PROTO1_1)
+	if (ctx->panel_rev == PANEL_REV_PROTO1_1)
+		exynos_panel_send_cmd_set(ctx, &s6e3fc3_6a_4_pwm_cmd_set);
+	else if (ctx->panel_rev >= PANEL_REV_EVT1_1)
 		if (ctx->hbm.local_hbm.gamma_para_ready)
 			s6e3fc3_6a_lhbm_gamma_write(ctx);
 
@@ -380,7 +384,7 @@ static int s6e3fc3_6a_enable(struct drm_panel *panel)
 }
 
 static void s6e3fc3_6a_set_hbm_mode(struct exynos_panel *exynos_panel,
-				 enum exynos_hbm_mode mode)
+				enum exynos_hbm_mode mode)
 {
 	const bool hbm_update =
 		(IS_HBM_ON(exynos_panel->hbm_mode) != IS_HBM_ON(mode));
@@ -390,9 +394,14 @@ static void s6e3fc3_6a_set_hbm_mode(struct exynos_panel *exynos_panel,
 	exynos_panel->hbm_mode = mode;
 
 	if (hbm_update) {
+		if (exynos_panel->panel_rev == PANEL_REV_PROTO1_1) {
+			if (IS_HBM_ON(mode))
+				exynos_panel_send_cmd_set(exynos_panel, &s6e3fc3_6a_1_pwm_cmd_set);
+			else
+				exynos_panel_send_cmd_set(exynos_panel, &s6e3fc3_6a_4_pwm_cmd_set);
+		}
 		s6e3fc3_6a_update_wrctrld(exynos_panel);
 	}
-
 	if (irc_update) {
 		EXYNOS_DCS_WRITE_SEQ(exynos_panel, 0xF0, 0x5A, 0x5A);
 		EXYNOS_DCS_WRITE_SEQ(exynos_panel, 0xB0, 0x03, 0x8F);
@@ -406,13 +415,7 @@ static void s6e3fc3_6a_set_hbm_mode(struct exynos_panel *exynos_panel,
 static void s6e3fc3_6a_set_dimming_on(struct exynos_panel *exynos_panel,
 				 bool dimming_on)
 {
-	const struct exynos_panel_mode *pmode = exynos_panel->current_mode;
-
 	exynos_panel->dimming_on = dimming_on;
-	if (pmode->exynos_mode.is_lp_mode) {
-		dev_info(exynos_panel->dev,"in lp mode, skip to update");
-		return;
-	}
 
 	s6e3fc3_6a_update_wrctrld(exynos_panel);
 }
@@ -420,27 +423,8 @@ static void s6e3fc3_6a_set_dimming_on(struct exynos_panel *exynos_panel,
 static void s6e3fc3_6a_set_local_hbm_mode(struct exynos_panel *exynos_panel,
 				 bool local_hbm_en)
 {
-	const struct exynos_panel_mode *pmode;
-
 	if (exynos_panel->hbm.local_hbm.enabled == local_hbm_en)
 		return;
-
-
-	pmode = exynos_panel->current_mode;
-	if (unlikely(pmode == NULL)) {
-		dev_err(exynos_panel->dev, "%s: unknown current mode\n", __func__);
-		return;
-	}
-	if (local_hbm_en) {
-		const int vrefresh = drm_mode_vrefresh(&pmode->mode);
-		/* Add check to turn on LHBM @ 90hz only */
-		if (vrefresh != 90) {
-			dev_err(exynos_panel->dev,
-				"unexpected mode `%s` while enabling LHBM, give up\n",
-				pmode->mode.name);
-			return;
-		}
-	}
 
 	exynos_panel->hbm.local_hbm.enabled = local_hbm_en;
 	s6e3fc3_6a_update_wrctrld(exynos_panel);
@@ -456,7 +440,7 @@ static void s6e3fc3_6a_mode_set(struct exynos_panel *ctx,
 }
 
 static bool s6e3fc3_6a_is_mode_seamless(const struct exynos_panel *ctx,
-					const struct exynos_panel_mode *pmode)
+				     const struct exynos_panel_mode *pmode)
 {
 	/* seamless mode switch is possible if only changing refresh rate */
 	return drm_mode_equal_no_clocks(&ctx->current_mode->mode, &pmode->mode);
@@ -469,7 +453,7 @@ static void s6e3fc3_6a_panel_init(struct exynos_panel *ctx)
 	exynos_panel_debugfs_create_cmdset(ctx, csroot,
 					   &s6e3fc3_6a_init_cmd_set, "init");
 
-	if (ctx->panel_rev >= PANEL_REV_PROTO1_1)
+	if (ctx->panel_rev >= PANEL_REV_EVT1_1)
 		if (!s6e3fc3_6a_lhbm_gamma_read(ctx))
 			s6e3fc3_6a_lhbm_gamma_write(ctx);
 }
@@ -478,39 +462,9 @@ static void s6e3fc3_6a_get_panel_rev(struct exynos_panel *ctx, u32 id)
 {
 	/* extract command 0xDB */
 	u8 build_code = (id & 0xFF00) >> 8;
-	u8 rev = build_code >> 2;
+	u8 rev = ((build_code & 0xE0) >> 3) | ((build_code & 0x0C) >> 2);
 
-	switch (rev) {
-	case 4:
-		ctx->panel_rev = PANEL_REV_PROTO1;
-		break;
-	case 5:
-		ctx->panel_rev = PANEL_REV_PROTO1_1;
-		break;
-	case 8:
-		ctx->panel_rev = PANEL_REV_EVT1;
-		break;
-	case 9:
-		ctx->panel_rev = PANEL_REV_EVT1_1;
-		break;
-	case 0x10:
-		ctx->panel_rev = PANEL_REV_DVT1;
-		break;
-	case 0x11:
-		ctx->panel_rev = PANEL_REV_DVT1_1;
-		break;
-	case 0x20:
-		ctx->panel_rev = PANEL_REV_PVT;
-		break;
-	default:
-		dev_warn(ctx->dev,
-			 "unknown rev from panel (0x%x), default to latest\n",
-			 rev);
-		ctx->panel_rev = PANEL_REV_LATEST;
-		return;
-	}
-
-	dev_info(ctx->dev, "panel_rev: 0x%x\n", ctx->panel_rev);
+	exynos_panel_get_panel_rev(ctx, rev);
 }
 
 static const struct exynos_display_underrun_param underrun_param = {
@@ -524,6 +478,39 @@ static const u32 s6e3fc3_6a_bl_range[] = {
 
 static const struct exynos_panel_mode s6e3fc3_6a_modes[] = {
 	{
+		/* 1080x2400 @ 60Hz */
+		.mode = {
+			.clock = 168498,
+			.hdisplay = 1080,
+			.hsync_start = 1080 + 32, // add hfp
+			.hsync_end = 1080 + 32 + 12, // add hsa
+			.htotal = 1080 + 32 + 12 + 26, // add hbp
+			.vdisplay = 2400,
+			.vsync_start = 2400 + 12, // add vfp
+			.vsync_end = 2400 + 12 + 4, // add vsa
+			.vtotal = 2400 + 12 + 4 + 26, // add vbp
+			.flags = 0,
+			.width_mm = 67,
+			.height_mm = 148,
+		},
+		.exynos_mode = {
+			.mode_flags = MIPI_DSI_CLOCK_NON_CONTINUOUS,
+			.vblank_usec = 120,
+			.bpc = 8,
+			.dsc = {
+				.enabled = true,
+				.dsc_count = 2,
+				.slice_count = 2,
+				.slice_height = 48,
+			},
+			.underrun_param = &underrun_param,
+		},
+		.te2_timing = {
+			.rising_edge = 0,
+			.falling_edge = 0 + 48,
+		},
+	},
+	{
 		/* 1080x2400 @ 90Hz */
 		.mode = {
 			.clock = 252747,
@@ -536,13 +523,12 @@ static const struct exynos_panel_mode s6e3fc3_6a_modes[] = {
 			.vsync_end = 2400 + 12 + 4, // add vsa
 			.vtotal = 2400 + 12 + 4 + 26, // add vbp
 			.flags = 0,
-			.width_mm = 64,
-			.height_mm = 142,
+			.width_mm = 67,
+			.height_mm = 148,
 		},
 		.exynos_mode = {
 			.mode_flags = MIPI_DSI_CLOCK_NON_CONTINUOUS,
 			.vblank_usec = 120,
-			.te_usec = 140,
 			.bpc = 8,
 			.dsc = {
 				.enabled = true,
@@ -574,8 +560,8 @@ static const struct exynos_panel_mode s6e3fc3_6a_lp_mode = {
 		.vtotal = 2400 + 12 + 4 + 26, // add vbp
 		.flags = 0,
 		.type = DRM_MODE_TYPE_DRIVER,
-		.width_mm = 64,
-		.height_mm = 142,
+		.width_mm = 67,
+		.height_mm = 148,
 	},
 	.exynos_mode = {
 		.mode_flags = MIPI_DSI_CLOCK_NON_CONTINUOUS,
@@ -638,7 +624,7 @@ const struct brightness_capability s6e3fc3_6a_brightness_capability = {
 			.max = 800,
 		},
 		.level = {
-			.min = 2389,
+			.min = 2048,
 			.max = 4095,
 		},
 		.percentage = {
@@ -690,5 +676,6 @@ static struct mipi_dsi_driver exynos_panel_driver = {
 };
 module_mipi_dsi_driver(exynos_panel_driver);
 
+MODULE_AUTHOR("Jiun Yu <jiun.yu@samsung.com>");
 MODULE_DESCRIPTION("MIPI-DSI based Samsung s6e3fc3_6a panel driver");
 MODULE_LICENSE("GPL");
