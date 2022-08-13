@@ -46,7 +46,7 @@ static const u8 test_key_on_f0[] = { 0xF0, 0x5A, 0x5A };
 static const u8 test_key_off_f0[] = { 0xF0, 0xA5, 0xA5 };
 static const u8 test_key_on_f1[] = { 0xF1, 0x5A, 0x5A };
 static const u8 test_key_off_f1[] = { 0xF1, 0xA5, 0xA5 };
-static const u8 freq_update[] = { 0xF7, 0x0F };
+static const u8 freq_update[] = { 0xF7, 0x0A };
 
 static const struct exynos_dsi_cmd s6e3fc3_6a_off_cmds[] = {
 	EXYNOS_DSI_CMD(display_off, 0),
