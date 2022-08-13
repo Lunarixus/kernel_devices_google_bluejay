@@ -52,19 +52,6 @@
 	status = "disabled";
 };
 
-&dsim_modes {
-	dsim-modes {
-		1080x2400 {
-			mode-name = "1080x2400";
-			pmsk = <
-				0x2 0xDF 0x3 0xA800 /* p m s k */
-				>;
-			hs-clk = <684>;
-			esc-clk = <20>;
-		};
-	};
-};
-
 /* vci-supply voltage for drmdsim0 */
 &m_ldo22_reg {
 	regulator-min-microvolt = <3025000>;
